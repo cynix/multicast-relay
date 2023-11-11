@@ -2,6 +2,8 @@ name: Build and release tarballs
 
 on:
   push:
+    branches:
+      - '*'
     tags:
       - 'v*'
 
@@ -13,6 +15,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Install gcc-aarch64
+        run: sudo apt install -y gcc-aarch64-linux-gnu
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -24,8 +29,15 @@ jobs:
           go-version: '1.21'
           check-latest: true
 
-      - name: GoReleaser
+      - name: Snapshot
         uses: goreleaser/goreleaser-action@v5
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        with:
+          args: release --clean --snapshot
+
+      - name: Release
+        uses: goreleaser/goreleaser-action@v5
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           args: release --clean
         env:

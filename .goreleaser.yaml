@@ -9,7 +9,7 @@ before:
 
 builds:
   - env:
-      - CGO_ENABLED=0
+      - CGO_ENABLED=1
     flags:
       - -v
       - -trimpath
@@ -17,10 +17,14 @@ builds:
       - -s -w
     goos:
       - linux
-      - freebsd
     goarch:
       - amd64
       - arm64
+    overrides:
+      - goos: linux
+        goarch: arm64
+        env:
+          - CC=aarch64-linux-gnu-gcc
 
 archives:
   - format: tar.gz
