@@ -15,9 +15,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install gcc-aarch64
-        run: sudo apt install -y gcc-aarch64-linux-gnu
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
