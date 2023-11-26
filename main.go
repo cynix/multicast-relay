@@ -45,8 +45,8 @@ func run() int {
 	senders := make(map[uint64]*Sender)
 
 	for _, arg := range flag.Args() {
-		parts := strings.Split(arg, ",")
-		if len(parts) < 3 {
+		parts := strings.Split(arg, "=")
+		if len(parts) != 2 {
 			log.Printf("invalid relay specification: %v", arg)
 			return 1
 		}
@@ -77,7 +77,7 @@ func run() int {
 
 		var ifs []*net.Interface
 
-		for _, name := range parts[1:] {
+		for _, name := range strings.Split(parts[1], ",") {
 			ifi, ok := ifm[name]
 			if !ok {
 				log.Printf("invalid interface: %v", name)
@@ -89,7 +89,7 @@ func run() int {
 
 		l, err := NewListener(ifs, group, id, ch)
 		if err != nil {
-			log.Printf("failed to create listener for %v on %v: %v", group, strings.Join(parts[1:], ","), err)
+			log.Printf("failed to create listener for %v on %v: %v", group, parts[1], err)
 			return 1
 		}
 
@@ -103,7 +103,7 @@ func run() int {
 
 		senders[group.Key()] = s
 
-		log.Printf("relaying %v on %v", group, strings.Join(parts[1:], ","))
+		log.Printf("relaying %v on %v", group, parts[1])
 	}
 
 	for _, l := range listeners {
